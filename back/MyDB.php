@@ -3,7 +3,7 @@ Class papperDB {
     private static $path = __DIR__ . DIRECTORY_SEPARATOR . "tables";
 
     public static function execSQL($query) {
-
+        self::checkDir();
         if ($query === "SHOW ALL TABLES") {
             return self::showAllTables();
         } else if (preg_match("/CREATE TABLE ([^|]+) (.+)/uis", $query, $foo)) {
@@ -43,7 +43,14 @@ Class papperDB {
         return false;
     }
 
+    private static function checkDir(){
+        if (!is_dir(self::$path)) {
+            mkdir(self::$path);
+        }
+    }
+
     private static function showAllTables() {
+        self::checkDir();
         $tables = [];
         $handle = opendir(self::$path);
         while (false !== ($entry = readdir($handle))) {
