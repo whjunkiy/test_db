@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html" lang="ru" style="width: 100%; height: 100%">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="TEST-DB">
+    <meta name="author" content="whjunkiy">
+    <link rel="icon" href="favicon.ico">
+    <link rel="canonical" href="https://getbootstrap.com/docs/3.4/examples/dashboard/">
+    <title>TEST-DB</title>
+    <script src="front/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="front/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="front/bootstrap/js/bootstrap.min.js"></script>
+    <style id="mainStyle">
+        body {
+            padding-top: 50px;
+        }
+        .sub-header {
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .navbar-fixed-top {
+            border: 0;
+        }
+        .sidebar {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 51px;
+                bottom: 0;
+                left: 0;
+                z-index: 1000;
+                display: block;
+                padding: 20px;
+                overflow-x: hidden;
+                overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+                background-color: #f5f5f5;
+                border-right: 1px solid #eee;
+            }
+        }
+        .nav-sidebar {
+            margin-right: -21px; /* 20px padding + 1px border */
+            margin-bottom: 20px;
+            margin-left: -20px;
+        }
+        .nav-sidebar > li > a {
+            padding-right: 20px;
+            padding-left: 20px;
+        }
+        .nav-sidebar > .active > a,
+        .nav-sidebar > .active > a:hover,
+        .nav-sidebar > .active > a:focus {
+            color: #fff;
+            background-color: #428bca;
+        }
+        .main {
+            padding: 20px;
+        }
+        @media (min-width: 768px) {
+            .main {
+                padding-right: 40px;
+                padding-left: 40px;
+            }
+        }
+        .main .page-header {
+            margin-top: 0;
+        }
+        .placeholders {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .placeholders h4 {
+            margin-bottom: 0;
+        }
+        .placeholder {
+            margin-bottom: 20px;
+        }
+        .placeholder img {
+            display: inline-block;
+            border-radius: 50%;
+        }
+        #blockingDiv {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+        }
+        #blockingMsg {
+            padding:10px;
+            height: 50%;
+            width: 50%;
+            margin: 0 auto;
+            overflow: auto;
+            z-index: 99999;
+            position: absolute;
+            background: azure;
+            color: slategrey;
+            top: 25%;
+            left: 25%;
+            text-align: center;
+            border-radius: 4rem;
+        }
+    </style>
+</head>
+<body>
+<div id="blockingDiv">
+    <div style="background-color: #161515; opacity: 0.5; z-index: 9999; position: absolute; left: 0; top: 0; width: 100%; height: 100%;">
+    </div>
+    <div id="blockingMsg">
+        <div style="margin-top: 7%; color: orange; font-weight: bolder; font-size: 10rem;">Ожидание...</div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="newTableDiv" style="display: none">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Table</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="table-name" class="col-form-label">Table name:</label>
+                        <input type="text" class="form-control" id="table-name">
+                    </div>
+                    <div class="form-group" id="colGroupDiv">
+                        <label for="column-1" class="col-form-label">Columns:</label>
+                        <button style="padding: 0px 6px" class="btn btn-success" onclick="event.preventDefault(); addCol();">+</button>
+                        <div id="col-1"><input type="text" class="form-control" id="column-1"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createNewTable(event);">Create</button>
+            </div>
+        </div>
+
+
+        <div class="modal-content" id="newDataDiv" style="display: none">
+            <div class="modal-header">
+                <h5 class="modal-title">New Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group" id="colDataDiv">
+                        <label for="coldata-1" class="col-form-label">Columns:</label>
+                        <div id="coldata-1"><input type="text" class="form-control" id="coldatainput-1"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="addNewTableData(event);">Add</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" style="z-index: 30">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="" onclick="event.preventDefault(); location.reload();">Таблицы БД</a>
+            <button type="button" class="btn btn-primary" style="margin-top: 0.7rem;" data-toggle="modal" data-target="#exampleModal" data-whatever="newTable">Добавить</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar" id="tablesUl">
+                <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">Reports</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header" id="tableH1">Dashboard</h1>
+
+            <div class="row placeholders">
+                <button type="button" class="btn btn-success" id="addDataBtn" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">Добавить</button>
+            </div>
+
+            <h2 class="sub-header">Данные:</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr id="THS">
+                    </tr>
+                    </thead>
+                    <tbody id="tBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="front/my.js"></script>
+</body>
+</html>
